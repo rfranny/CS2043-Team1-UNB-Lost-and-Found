@@ -1,2 +1,11 @@
-# CS2043-Team1-UNB-Lost-and-Found
-UNB Lost &amp; Found desktop application for CS2043 — Team 1.
+# UNB Lost & Found
+CS2043 - Team 1
+A Java desktop application for UNB students and staff to report, search for and manage lost and found items.
+
+## Team Members
+- Francois Rossouw
+- Kamsiyochukwu Umeobi
+- Nathan Britto
+
+## Planned Technologies
+Java, JavaFX, MySQL, JDBC, and JUnit.
