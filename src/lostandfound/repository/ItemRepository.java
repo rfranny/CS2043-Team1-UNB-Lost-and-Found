@@ -52,4 +52,17 @@ public class ItemRepository {
     public int count() {
         return reports.size();
     }
+    
+    public int getNextId() {
+        int maxId = 0;
+
+        for (ItemReport report : reports) {
+            if (report.getId() > maxId) {
+                maxId = report.getId();
+            }
+        }
+
+        return maxId + 1;
+    }
+    
 }
