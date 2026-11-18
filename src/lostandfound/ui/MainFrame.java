@@ -14,11 +14,11 @@ public class MainFrame extends JFrame {
 
     public MainFrame() {
         setTitle("UNB Lost and Found");
-        setSize(600, 500);
+        setSize(700, 550);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // One shared repository for the entire application
+        // Shared repository for all three features
         repository = new ItemRepository();
 
         LostItemService lostItemService =
@@ -29,14 +29,22 @@ public class MainFrame extends JFrame {
 
         JTabbedPane tabs = new JTabbedPane();
 
+        // Your feature
         tabs.addTab(
             "Report Lost Item",
             new LostItemPanel(lostItemService)
         );
 
+        // Nathan's feature
         tabs.addTab(
             "Report Found Item",
             new FoundItemPanel(foundItemService)
+        );
+
+        // Kamsi's feature
+        tabs.addTab(
+            "Browse Reports",
+            new BrowseReportsPanel(repository)
         );
 
         add(tabs);
