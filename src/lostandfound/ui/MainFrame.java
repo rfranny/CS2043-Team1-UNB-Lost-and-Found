@@ -1,3 +1,4 @@
+
 package lostandfound.ui;
 
 import javax.swing.JFrame;
@@ -5,6 +6,7 @@ import javax.swing.JTabbedPane;
 
 import lostandfound.repository.ItemRepository;
 import lostandfound.service.LostItemService;
+import lostandfound.service.FoundItemService;
 
 public class MainFrame extends JFrame {
 
@@ -22,15 +24,20 @@ public class MainFrame extends JFrame {
         LostItemService lostItemService =
                 new LostItemService(repository);
 
+        FoundItemService foundItemService =
+                new FoundItemService(repository);
+
         JTabbedPane tabs = new JTabbedPane();
 
-        // Existing working feature
         tabs.addTab(
             "Report Lost Item",
             new LostItemPanel(lostItemService)
         );
 
-        // Other features will be added here later
+        tabs.addTab(
+            "Report Found Item",
+            new FoundItemPanel(foundItemService)
+        );
 
         add(tabs);
     }
