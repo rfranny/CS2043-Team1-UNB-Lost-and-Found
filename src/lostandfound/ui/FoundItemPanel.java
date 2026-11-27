@@ -6,6 +6,7 @@ import java.time.format.DateTimeParseException;
 
 import javax.swing.*;
 
+import lostandfound.model.ItemCategory;
 import lostandfound.model.ItemReport;
 import lostandfound.service.FoundItemService;
 
@@ -17,6 +18,7 @@ public class FoundItemPanel extends JPanel {
     private final JTextArea descriptionArea;
     private final JTextField locationField;
     private final JTextField dateField;
+    private final JComboBox<ItemCategory> categoryBox;
 
     private final JButton submitButton;
 
@@ -29,10 +31,15 @@ public class FoundItemPanel extends JPanel {
         descriptionArea = new JTextArea(3, 20);
         locationField = new JTextField();
         dateField = new JTextField();
+        categoryBox = new JComboBox<>(ItemCategory.values());
+        categoryBox.setSelectedItem(ItemCategory.OTHER);
         submitButton = new JButton("Submit Found Item");
 
         add(new JLabel("Item Name:"));
         add(nameField);
+        
+        add(new JLabel("Category:"));
+        add(categoryBox);
 
         add(new JLabel("Description:"));
         add(new JScrollPane(descriptionArea));
@@ -56,19 +63,20 @@ public class FoundItemPanel extends JPanel {
                 nameField.getText(),
                 descriptionArea.getText(),
                 locationField.getText(),
-                date
+                date,
+                (ItemCategory) categoryBox.getSelectedItem()
             );
 
             JOptionPane.showMessageDialog(
                 this,
-                "Found item reported successfully!\n"
-                    + "Report ID: " + report.getId()
+                "Found item reported successfully!\n" + "Report ID: " + report.getId()
             );
 
             nameField.setText("");
             descriptionArea.setText("");
             locationField.setText("");
             dateField.setText("");
+            categoryBox.setSelectedItem(ItemCategory.OTHER);
 
         } catch (DateTimeParseException ex) {
             JOptionPane.showMessageDialog(

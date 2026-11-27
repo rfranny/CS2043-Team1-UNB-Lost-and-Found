@@ -9,6 +9,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import lostandfound.model.ItemCategory;
 import lostandfound.model.ItemReport;
 import lostandfound.model.ReportType;
 import lostandfound.repository.ItemRepository;
@@ -22,6 +23,7 @@ public class BrowseReportsPanel extends JPanel {
 
     private final JComboBox<String> typeFilter;
     private final JTextField searchField;
+    private final JComboBox<String> categoryFilter;
     private final DefaultTableModel tableModel;
     private final JTable reportTable;
     private final JTextArea detailsArea;
@@ -35,12 +37,20 @@ public class BrowseReportsPanel extends JPanel {
         // Top bar: type filter and refresh button
         typeFilter = new JComboBox<>(new String[] {ALL, "Lost", "Found"});
         searchField = new JTextField(16);
+        
+        categoryFilter = new JComboBox<>();
+        categoryFilter.addItem("All Categories");
+        for (ItemCategory category : ItemCategory.values()) {
+            categoryFilter.addItem(category.name());
+        }
+        
         JButton searchButton = new JButton("Search");
         JButton refreshButton = new JButton("Refresh");
 
         JPanel topBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topBar.add(new JLabel("Show:"));
         topBar.add(typeFilter);
+        topBar.add(categoryFilter);
         JLabel searchLabel = new JLabel("Keyword:");
         searchLabel.setLabelFor(searchField);
         topBar.add(searchLabel);
@@ -51,7 +61,7 @@ public class BrowseReportsPanel extends JPanel {
 
         // Table of reports
         tableModel = new DefaultTableModel(
-            new String[] {"ID", "Item Name", "Type", "Location"}, 0
+            new String[] {"ID", "Item Name", "Type", "Location", "Category"}, 0
         ) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -75,6 +85,7 @@ public class BrowseReportsPanel extends JPanel {
         add(detailsScroll, BorderLayout.SOUTH);
 
         typeFilter.addActionListener(e -> refreshReports());
+        categoryFilter.addActionListener(e -> refreshReports());
         searchButton.addActionListener(e -> refreshReports());
         searchField.addActionListener(e -> refreshReports());
         refreshButton.addActionListener(e -> refreshReports());
@@ -98,7 +109,18 @@ public class BrowseReportsPanel extends JPanel {
     // Rereads the shared repository so newly submitted reports appear
     public void refreshReports() {
     	
-    	List<ItemReport> reports = service.searchReports(searchField.getText(), selectedType());
+    	String selection = (String) categoryFilter.getSelectedItem();
+
+    	ItemCategory category = null;
+    	if (!"All Categories".equals(selection)) {
+    	    category = ItemCategory.valueOf(selection);
+    	}
+
+    	List<ItemReport> reports = service.searchReports(
+    	    searchField.getText(),
+    	    selectedType(),
+    	    category
+    	);
 
         tableModel.setRowCount(0);
 
@@ -107,7 +129,8 @@ public class BrowseReportsPanel extends JPanel {
                 report.getId(),
                 report.getName(),
                 report.getType(),
-                report.getLocation()
+                report.getLocation(),
+                report.getCategory()
             });
         }
 

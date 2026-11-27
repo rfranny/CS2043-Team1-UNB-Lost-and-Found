@@ -5,6 +5,7 @@ import java.util.Locale;
 import java.util.Comparator;
 import java.util.List;
 
+import lostandfound.model.ItemCategory;
 import lostandfound.model.ItemReport;
 import lostandfound.model.ReportType;
 import lostandfound.repository.ItemRepository;
@@ -69,6 +70,17 @@ public class BrowseReportsService {
             if (nameMatches || descriptionMatches) {
                 matches.add(report);
             }
+        }
+
+        return matches;
+    }
+    
+    public List<ItemReport> searchReports(
+            String keyword, ReportType type, ItemCategory category) {
+        List<ItemReport> matches = searchReports(keyword, type);
+
+        if (category != null) {
+            matches.removeIf(report -> report.getCategory() != category);
         }
 
         return matches;

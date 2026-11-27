@@ -7,6 +7,7 @@ import java.time.format.DateTimeParseException;
 
 import javax.swing.*;
 
+import lostandfound.model.ItemCategory;
 import lostandfound.model.ItemReport;
 import lostandfound.service.LostItemService;
 
@@ -18,6 +19,7 @@ public class LostItemPanel extends JPanel {
     private final JTextArea descriptionArea;
     private final JTextField locationField;
     private final JTextField dateField;
+    private final JComboBox<ItemCategory> categoryBox;
 
     private final JButton submitButton;
 
@@ -30,10 +32,15 @@ public class LostItemPanel extends JPanel {
         descriptionArea = new JTextArea(3, 20);
         locationField = new JTextField();
         dateField = new JTextField();
+        categoryBox = new JComboBox<>(ItemCategory.values());
+        categoryBox.setSelectedItem(ItemCategory.OTHER);
         submitButton = new JButton("Submit Lost Item");
 
         add(new JLabel("Item Name:"));
         add(nameField);
+        
+        add(new JLabel("Category:"));
+        add(categoryBox);
 
         add(new JLabel("Description:"));
         add(new JScrollPane(descriptionArea));
@@ -57,7 +64,8 @@ public class LostItemPanel extends JPanel {
                 nameField.getText(),
                 descriptionArea.getText(),
                 locationField.getText(),
-                date
+                date,
+                (ItemCategory) categoryBox.getSelectedItem()
             );
 
             JOptionPane.showMessageDialog(
@@ -70,6 +78,7 @@ public class LostItemPanel extends JPanel {
             descriptionArea.setText("");
             locationField.setText("");
             dateField.setText("");
+            categoryBox.setSelectedItem(ItemCategory.OTHER);
 
         } catch (DateTimeParseException ex) {
             JOptionPane.showMessageDialog(
