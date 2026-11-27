@@ -108,4 +108,15 @@ class BrowseReportsServiceTest {
             () -> new BrowseReportsService(null)
         );
     }
+    
+    @Test
+    void searchMatchesKeywordWithinSelectedType() {
+        addReport("Black keys", ReportType.LOST);
+        ItemReport foundKeys = addReport("Silver keys", ReportType.FOUND);
+        addReport("Wallet", ReportType.FOUND);
+
+        List<ItemReport> results = service.searchReports("  KEYS  ", ReportType.FOUND);
+
+        assertEquals(List.of(foundKeys), results);
+    }
 }
