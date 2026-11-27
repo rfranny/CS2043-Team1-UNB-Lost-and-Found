@@ -21,9 +21,11 @@ public class BrowseReportsPanel extends JPanel {
     private final BrowseReportsService service;
 
     private final JComboBox<String> typeFilter;
+    private final JTextField searchField;
     private final DefaultTableModel tableModel;
     private final JTable reportTable;
     private final JTextArea detailsArea;
+    
 
     public BrowseReportsPanel(ItemRepository repository) {
         this.service = new BrowseReportsService(repository);
@@ -32,11 +34,18 @@ public class BrowseReportsPanel extends JPanel {
 
         // Top bar: type filter and refresh button
         typeFilter = new JComboBox<>(new String[] {ALL, "Lost", "Found"});
+        searchField = new JTextField(16);
+        JButton searchButton = new JButton("Search");
         JButton refreshButton = new JButton("Refresh");
 
         JPanel topBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topBar.add(new JLabel("Show:"));
         topBar.add(typeFilter);
+        JLabel searchLabel = new JLabel("Keyword:");
+        searchLabel.setLabelFor(searchField);
+        topBar.add(searchLabel);
+        topBar.add(searchField);
+        topBar.add(searchButton);
         topBar.add(refreshButton);
         add(topBar, BorderLayout.NORTH);
 
@@ -66,6 +75,8 @@ public class BrowseReportsPanel extends JPanel {
         add(detailsScroll, BorderLayout.SOUTH);
 
         typeFilter.addActionListener(e -> refreshReports());
+        searchButton.addActionListener(e -> refreshReports());
+        searchField.addActionListener(e -> refreshReports());
         refreshButton.addActionListener(e -> refreshReports());
         reportTable.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
@@ -86,7 +97,8 @@ public class BrowseReportsPanel extends JPanel {
 
     // Rereads the shared repository so newly submitted reports appear
     public void refreshReports() {
-        List<ItemReport> reports = service.getReportsByType(selectedType());
+    	
+    	List<ItemReport> reports = service.searchReports(searchField.getText(), selectedType());
 
         tableModel.setRowCount(0);
 

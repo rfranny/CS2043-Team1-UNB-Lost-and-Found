@@ -1,6 +1,7 @@
 package lostandfound.service;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Comparator;
 import java.util.List;
 
@@ -45,7 +46,34 @@ public class BrowseReportsService {
 
         return filtered;
     }
+    
+    public List<ItemReport> searchReports(String keyword, ReportType type) {
+        List<ItemReport> reports = getReportsByType(type);
+        String query = keyword == null ? "" : keyword.strip().toLowerCase(Locale.ROOT);
 
+        if (query.isEmpty()) {
+            return reports;
+        }
+
+        List<ItemReport> matches = new ArrayList<>();
+
+        for (ItemReport report : reports) {
+            String name = report.getName();
+            String description = report.getDescription();
+
+            boolean nameMatches = name != null
+                && name.toLowerCase(Locale.ROOT).contains(query);
+            boolean descriptionMatches = description != null
+                && description.toLowerCase(Locale.ROOT).contains(query);
+
+            if (nameMatches || descriptionMatches) {
+                matches.add(report);
+            }
+        }
+
+        return matches;
+    }
+    
     public ItemReport getReport(int id) {
         return repository.findById(id);
     }
