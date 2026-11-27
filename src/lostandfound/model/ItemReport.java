@@ -10,17 +10,20 @@ public class ItemReport {
     private final String location;
     private final LocalDate date;
     private final ReportType type;
+    private final ItemCategory category;
 
-    public ItemReport(int id, String name,
-                      String description, String location,
-                      LocalDate date, ReportType type) {
+    public ItemReport(int id, String name, String description, String location, LocalDate date, ReportType type) {
+    	this(id, name, description, location, date, type, ItemCategory.OTHER);
+    }
 
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.location = location;
-        this.date = date;
-        this.type = type;
+    public ItemReport(int id, String name, String description, String location, LocalDate date, ReportType type, ItemCategory category) {
+    	this.id = id;
+    	this.name = name;
+    	this.description = description;
+    	this.location = location;
+    	this.date = date;
+    	this.type = type;
+    	this.category = category;
     }
 
     public int getId() {
@@ -46,4 +49,9 @@ public class ItemReport {
     public ReportType getType() {
         return type;
     }
+    
+    public ItemCategory getCategory() {
+        return category;
+    }
+    
 }

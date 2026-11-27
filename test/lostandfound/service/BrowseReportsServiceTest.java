@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import lostandfound.model.ItemCategory;
 import lostandfound.model.ItemReport;
 import lostandfound.model.ReportType;
 import lostandfound.repository.ItemRepository;
@@ -119,4 +120,22 @@ class BrowseReportsServiceTest {
 
         assertEquals(List.of(foundKeys), results);
     }
+    
+    @Test
+    void searchCombinesKeywordTypeAndCategory() {
+        LocalDate date = LocalDate.of(2026, 11, 27);
+
+        ItemReport keys = new ItemReport(repository.getNextId(), "Car Keys",
+            "", "Head Hall", date, ReportType.LOST, ItemCategory.KEYS);
+        repository.save(keys);
+
+        repository.save(new ItemReport(repository.getNextId(), "Keyboard",
+            "", "Head Hall", date, ReportType.LOST, ItemCategory.ELECTRONICS));
+
+        assertEquals(List.of(keys),
+            service.searchReports("key", ReportType.LOST, ItemCategory.KEYS));
+        assertTrue(
+            service.searchReports("key", ReportType.FOUND, ItemCategory.KEYS).isEmpty());
+    }
+    
 }

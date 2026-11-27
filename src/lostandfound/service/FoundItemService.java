@@ -2,6 +2,7 @@ package lostandfound.service;
 
 import java.time.LocalDate;
 
+import lostandfound.model.ItemCategory;
 import lostandfound.model.ItemReport;
 import lostandfound.model.ReportType;
 import lostandfound.repository.ItemRepository;
@@ -19,12 +20,12 @@ public class FoundItemService {
 
         this.repository = repository;
     }
-
-    public ItemReport reportFoundItem(
-            String name,
-            String description,
-            String location,
-            LocalDate date) {
+    
+    public ItemReport reportFoundItem(String name, String description, String location, LocalDate date) {
+        return reportFoundItem(name, description, location, date, ItemCategory.OTHER);
+    }
+    
+    public ItemReport reportFoundItem(String name, String description, String location, LocalDate date, ItemCategory category) {
 
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException(
@@ -52,7 +53,8 @@ public class FoundItemService {
             description == null ? "" : description.trim(),
             location.trim(),
             date,
-            ReportType.FOUND
+            ReportType.FOUND,
+            category
         );
 
         repository.save(report);
