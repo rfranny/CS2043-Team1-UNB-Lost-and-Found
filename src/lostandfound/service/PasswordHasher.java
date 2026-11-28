@@ -1,18 +1,23 @@
 package lostandfound.service;
 
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+
 /**
- * Salted SHA-256 password hashing, shared by sign-up and login so
- * passwords are never stored or compared in plain text.
+ * Salted PBKDF2 password hashing from the JDK, shared by registration
+ * and login so passwords are never stored or compared in plain text.
  */
 public final class PasswordHasher {
 
     private static final int SALT_BYTES = 16;
+    private static final int ITERATIONS = 65_536;
+    private static final int KEY_BITS = 256;
     private static final SecureRandom RANDOM = new SecureRandom();
 
     private PasswordHasher() {
@@ -26,14 +31,23 @@ public final class PasswordHasher {
 
     public static String hash(String password, String salt) {
         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hashed = digest.digest(
-                (salt + password).getBytes(StandardCharsets.UTF_8)
+            PBEKeySpec spec = new PBEKeySpec(
+                password.toCharArray(),
+                Base64.getDecoder().decode(salt),
+                ITERATIONS,
+                KEY_BITS
             );
+
+            byte[] hashed = SecretKeyFactory
+                .getInstance("PBKDF2WithHmacSHA256")
+                .generateSecret(spec)
+                .getEncoded();
+
             return Base64.getEncoder().encodeToString(hashed);
-        } catch (NoSuchAlgorithmException e) {
+
+        } catch (GeneralSecurityException e) {
             throw new IllegalStateException(
-                "SHA-256 is not available", e
+                "Password hashing is not available", e
             );
         }
     }

@@ -1,23 +1,23 @@
 package lostandfound.model;
 
-public class Account {
+public class User {
 
-    private final String username;
+    private final String name;
     private final String email;
     private final String salt;
     private final String passwordHash;
 
-    public Account(String username, String email,
-                   String salt, String passwordHash) {
+    public User(String name, String email,
+                String salt, String passwordHash) {
 
-        this.username = username;
+        this.name = name;
         this.email = email;
         this.salt = salt;
         this.passwordHash = passwordHash;
     }
 
-    public String getUsername() {
-        return username;
+    public String getName() {
+        return name;
     }
 
     public String getEmail() {

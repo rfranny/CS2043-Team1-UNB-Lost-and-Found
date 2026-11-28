@@ -5,33 +5,41 @@ import java.util.Arrays;
 
 import javax.swing.*;
 
-import lostandfound.model.Account;
-import lostandfound.service.SignUpService;
+import lostandfound.service.RegistrationService;
 
-public class SignUpPanel extends JPanel {
+public class RegisterPanel extends JPanel {
 
-    private final SignUpService service;
+    private final RegistrationService service;
+    private final Runnable onGoToLogin;
 
-    private final JTextField usernameField;
+    private final JTextField nameField;
     private final JTextField emailField;
     private final JPasswordField passwordField;
     private final JPasswordField confirmPasswordField;
 
     private final JButton signUpButton;
+    private final JButton goToLoginButton;
 
-    public SignUpPanel(SignUpService service) {
+    /**
+     * @param onGoToLogin run when the user wants the Login screen
+     *                    (after signing up, or via the Log In button)
+     */
+    public RegisterPanel(RegistrationService service,
+                         Runnable onGoToLogin) {
         this.service = service;
+        this.onGoToLogin = onGoToLogin;
 
         setLayout(new GridLayout(0, 1, 5, 5));
 
-        usernameField = new JTextField();
+        nameField = new JTextField();
         emailField = new JTextField();
         passwordField = new JPasswordField();
         confirmPasswordField = new JPasswordField();
         signUpButton = new JButton("Sign Up");
+        goToLoginButton = new JButton("Already have an account? Log In");
 
-        add(new JLabel("Username:"));
-        add(usernameField);
+        add(new JLabel("Name:"));
+        add(nameField);
 
         add(new JLabel("Email:"));
         add(emailField);
@@ -43,17 +51,19 @@ public class SignUpPanel extends JPanel {
         add(confirmPasswordField);
 
         add(signUpButton);
+        add(goToLoginButton);
 
-        signUpButton.addActionListener(e -> submitSignUp());
+        signUpButton.addActionListener(e -> submitRegistration());
+        goToLoginButton.addActionListener(e -> onGoToLogin.run());
     }
 
-    private void submitSignUp() {
+    private void submitRegistration() {
         char[] password = passwordField.getPassword();
         char[] confirmPassword = confirmPasswordField.getPassword();
 
         try {
-            Account account = service.signUp(
-                usernameField.getText(),
+            service.register(
+                nameField.getText(),
                 emailField.getText(),
                 new String(password),
                 new String(confirmPassword)
@@ -61,11 +71,11 @@ public class SignUpPanel extends JPanel {
 
             JOptionPane.showMessageDialog(
                 this,
-                "Account created successfully!\n"
-                    + "Welcome, " + account.getUsername()
+                "Account created successfully"
             );
 
             clearForm();
+            onGoToLogin.run();
 
         } catch (IllegalArgumentException ex) {
             JOptionPane.showMessageDialog(
@@ -82,7 +92,7 @@ public class SignUpPanel extends JPanel {
     }
 
     private void clearForm() {
-        usernameField.setText("");
+        nameField.setText("");
         emailField.setText("");
         passwordField.setText("");
         confirmPasswordField.setText("");
